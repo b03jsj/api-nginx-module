@@ -6,7 +6,7 @@ index dadf03f..68c74f4 100644
  ngx_uint_t    ngx_exiting;
  sig_atomic_t  ngx_reconfigure;
  sig_atomic_t  ngx_reopen;
-+#if (NGX_HTTP_APISIX)
++#if (NGX_HTTP_API)
 +ngx_uint_t    ngx_last_reopen_msec;
 +#endif
  
@@ -16,7 +16,7 @@ index dadf03f..68c74f4 100644
  void
  ngx_single_process_cycle(ngx_cycle_t *cycle)
  {
-+#if (NGX_HTTP_APISIX)
++#if (NGX_HTTP_API)
 +    ngx_time_t              *tp;
 +#endif
      ngx_uint_t  i;
@@ -26,7 +26,7 @@ index dadf03f..68c74f4 100644
  
          if (ngx_reopen) {
              ngx_reopen = 0;
-+#if (NGX_HTTP_APISIX)
++#if (NGX_HTTP_API)
 +            tp = ngx_timeofday();
 +            ngx_last_reopen_msec = tp->sec * 1000 + tp->msec;
 +#endif
@@ -37,7 +37,7 @@ index dadf03f..68c74f4 100644
  static void
  ngx_worker_process_cycle(ngx_cycle_t *cycle, void *data)
  {
-+#if (NGX_HTTP_APISIX)
++#if (NGX_HTTP_API)
 +    ngx_time_t              *tp;
 +#endif
      ngx_int_t worker = (intptr_t) data;
@@ -47,7 +47,7 @@ index dadf03f..68c74f4 100644
  
          if (ngx_reopen) {
              ngx_reopen = 0;
-+#if (NGX_HTTP_APISIX)
++#if (NGX_HTTP_API)
 +            tp = ngx_timeofday();
 +            ngx_last_reopen_msec = tp->sec * 1000 + tp->msec;
 +#endif
@@ -58,7 +58,7 @@ index dadf03f..68c74f4 100644
  }
  
  
-+#if (NGX_HTTP_APISIX)
++#if (NGX_HTTP_API)
 +ngx_uint_t
 +ngx_worker_process_get_last_reopen_ms()
 +{

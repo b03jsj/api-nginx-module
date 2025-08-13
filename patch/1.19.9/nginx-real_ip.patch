@@ -19,7 +19,7 @@ index 9586ebe..05a40ea 100644
  }
  
  
-+#if (NGX_HTTP_APISIX)
++#if (NGX_HTTP_API)
 +ngx_int_t
 +ngx_http_realip_set_real_addr(ngx_http_request_t *r, ngx_addr_t *addr)
 +{

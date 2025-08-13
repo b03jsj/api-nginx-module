@@ -6,8 +6,8 @@ index b3d8a43..424c381 100644
  #include <ngx_config.h>
  #include <ngx_core.h>
  #include <ngx_stream.h>
-+#if (NGX_STREAM_APISIX)
-+#include <ngx_stream_apisix_module.h>
++#if (NGX_STREAM_API)
++#include <ngx_stream_api_module.h>
 +#endif
  
  
@@ -16,9 +16,9 @@ index b3d8a43..424c381 100644
  
  #if (NGX_STREAM_SSL)
  
-+#if (NGX_STREAM_APISIX)
++#if (NGX_STREAM_API)
 +    if (pc->type == SOCK_STREAM &&
-+        (ngx_stream_apisix_is_proxy_ssl_enabled(s) || pscf->ssl_enable))
++        (ngx_stream_api_is_proxy_ssl_enabled(s) || pscf->ssl_enable))
 +    {
 +#else
      if (pc->type == SOCK_STREAM && pscf->ssl) {
@@ -30,7 +30,7 @@ index b3d8a43..424c381 100644
      ngx_conf_merge_ptr_value(conf->ssl_conf_commands,
                                prev->ssl_conf_commands, NULL);
  
-+#if (NGX_STREAM_APISIX)
++#if (NGX_STREAM_API)
 +    if (ngx_stream_proxy_set_ssl(cf, conf) != NGX_OK) {
 +#else
      if (conf->ssl_enable && ngx_stream_proxy_set_ssl(cf, conf) != NGX_OK) {

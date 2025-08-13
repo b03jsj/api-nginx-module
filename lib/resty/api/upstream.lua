@@ -13,11 +13,11 @@ base.allows_subsystem("http")
 
 ffi.cdef([[
 typedef intptr_t        ngx_int_t;
-ngx_int_t ngx_http_apisix_upstream_set_cert_and_key(ngx_http_request_t *r, void *cert, void *key);
-ngx_int_t ngx_http_apisix_upstream_set_ssl_trusted_store(ngx_http_request_t *r, void *store);
-int ngx_http_apisix_upstream_set_ssl_verify(ngx_http_request_t *r, int verify);
+ngx_int_t ngx_http_api_upstream_set_cert_and_key(ngx_http_request_t *r, void *cert, void *key);
+ngx_int_t ngx_http_api_upstream_set_ssl_trusted_store(ngx_http_request_t *r, void *store);
+int ngx_http_api_upstream_set_ssl_verify(ngx_http_request_t *r, int verify);
 
-ngx_int_t ngx_http_apisix_set_upstream_pass_trailers(ngx_http_request_t *r, int on);
+ngx_int_t ngx_http_api_set_upstream_pass_trailers(ngx_http_request_t *r, int on);
 ]])
 local _M = {}
 
@@ -28,7 +28,7 @@ function _M.set_cert_and_key(cert, key)
     end
 
     local r = get_request()
-    local ret = C.ngx_http_apisix_upstream_set_cert_and_key(r, cert, key)
+    local ret = C.ngx_http_api_upstream_set_cert_and_key(r, cert, key)
     if ret == NGX_ERROR then
         return nil, "error while setting upstream client cert and key"
     end
@@ -58,7 +58,7 @@ do
 
         local r = get_request()
 
-        local ret = C.ngx_http_apisix_upstream_set_ssl_trusted_store(
+        local ret = C.ngx_http_api_upstream_set_ssl_trusted_store(
             r, store.ctx)
         if ret == NGX_OK then
             return true
@@ -93,7 +93,7 @@ do
 
         local r = get_request()
 
-        local ret = C.ngx_http_apisix_upstream_set_ssl_verify(
+        local ret = C.ngx_http_api_upstream_set_ssl_verify(
             r, verify)
         if ret == NGX_OK then
             return true
@@ -115,7 +115,7 @@ function _M.set_pass_trailers(on)
     end
 
     local r = get_request()
-    local ret = C.ngx_http_apisix_set_upstream_pass_trailers(r, on and 1 or 0)
+    local ret = C.ngx_http_api_set_upstream_pass_trailers(r, on and 1 or 0)
     if ret == NGX_ERROR then
         return nil, "error while setting upstream pass_trailers"
     end

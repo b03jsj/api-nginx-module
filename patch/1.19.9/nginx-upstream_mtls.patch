@@ -6,8 +6,8 @@ index 76045c4..cee3e2a 100644
  #include <ngx_config.h>
  #include <ngx_core.h>
  #include <ngx_http.h>
-+#if (NGX_HTTP_APISIX)
-+#include <ngx_http_apisix_module.h>
++#if (NGX_HTTP_API)
++#include <ngx_http_api_module.h>
 +#endif
  
  #if (T_NGX_MULTI_UPSTREAM)
@@ -16,8 +16,8 @@ index 76045c4..cee3e2a 100644
  
      r->connection->log->action = "SSL handshaking to upstream";
  
-+#if (NGX_HTTP_APISIX)
-+    ngx_http_apisix_set_upstream_ssl(r, c);
++#if (NGX_HTTP_API)
++    ngx_http_api_set_upstream_ssl(r, c);
 +#endif
 +
      rc = ngx_ssl_handshake(c);

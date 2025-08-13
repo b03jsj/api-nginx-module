@@ -6,8 +6,8 @@ index 2be233c..06bbbb9 100644
  #include <ngx_config.h>
  #include <ngx_core.h>
  #include <ngx_http.h>
-+#if (NGX_HTTP_APISIX)
-+#include <ngx_http_apisix_module.h>
++#if (NGX_HTTP_API)
++#include <ngx_http_api_module.h>
 +#endif
  
  
@@ -17,8 +17,8 @@ index 2be233c..06bbbb9 100644
          return;
      }
 -
-+#if (NGX_HTTP_APISIX)
-+    if (u->conf->ssl_server_name || ngx_http_apisix_get_upstream_ssl_verify(r, u->conf->ssl_verify)) {
++#if (NGX_HTTP_API)
++    if (u->conf->ssl_server_name || ngx_http_api_get_upstream_ssl_verify(r, u->conf->ssl_verify)) {
 +#else
      if (u->conf->ssl_server_name || u->conf->ssl_verify) {
 +#endif
@@ -29,8 +29,8 @@ index 2be233c..06bbbb9 100644
  
      r->connection->log->action = "SSL handshaking to upstream";
  
-+#if (NGX_HTTP_APISIX)
-+    ngx_http_apisix_set_upstream_ssl(r, c);
++#if (NGX_HTTP_API)
++    ngx_http_api_set_upstream_ssl(r, c);
 +#endif
 +
      rc = ngx_ssl_handshake(c);
@@ -40,8 +40,8 @@ index 2be233c..06bbbb9 100644
  
      if (c->ssl->handshaked) {
  
-+#if (NGX_HTTP_APISIX)
-+        if (ngx_http_apisix_get_upstream_ssl_verify(r, u->conf->ssl_verify)) {
++#if (NGX_HTTP_API)
++        if (ngx_http_api_get_upstream_ssl_verify(r, u->conf->ssl_verify)) {
 +#else
          if (u->conf->ssl_verify) {
 +#endif

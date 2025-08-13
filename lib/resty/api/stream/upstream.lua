@@ -11,7 +11,7 @@ base.allows_subsystem("stream")
 ffi.cdef([[
 typedef intptr_t        ngx_int_t;
 ngx_int_t
-ngx_stream_apisix_upstream_enable_tls(ngx_stream_lua_request_t *r);
+ngx_stream_api_upstream_enable_tls(ngx_stream_lua_request_t *r);
 ]])
 local _M = {}
 
@@ -21,7 +21,7 @@ function _M.set_tls()
     -- This way is more intuitive.
     -- The side effect is that we need to change Nginx to check `ssl_enable` flag instead.
     local r = get_request()
-    local rc = C.ngx_stream_apisix_upstream_enable_tls(r)
+    local rc = C.ngx_stream_api_upstream_enable_tls(r)
     if rc == NGX_ERROR then
         return nil, "error while setting upstream tls"
     end

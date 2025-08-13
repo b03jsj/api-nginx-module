@@ -1,4 +1,4 @@
-use t::APISIX_NGINX;
+use t::API_NGINX;
 
 my $openssl_version = eval { `openssl version 2>&1` };
 

@@ -1,11 +1,11 @@
-use t::APISIX_NGINX 'no_plan';
+use t::API_NGINX 'no_plan';
 
 add_block_preprocessor(sub {
     my ($block) = @_;
 
     if (!$block->http_config) {
         my $http_config = <<'_EOC_';
-    apisix_delay_client_max_body_check on;
+    api_delay_client_max_body_check on;
 _EOC_
 
         $block->set_value("http_config", $http_config);
@@ -30,7 +30,7 @@ POST /t
 
 === TEST 2: global client_max_body_size set, without check delay
 --- config
-    apisix_delay_client_max_body_check off;
+    api_delay_client_max_body_check off;
     location /t {
         client_max_body_size 1;
         return 200;

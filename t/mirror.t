@@ -1,4 +1,4 @@
-use t::APISIX_NGINX 'no_plan';
+use t::API_NGINX 'no_plan';
 
 run_tests();
 
@@ -36,7 +36,7 @@ location /mirror {
 }
 location /t {
     mirror /mirror;
-    apisix_mirror_on_demand on;
+    api_mirror_on_demand on;
     content_by_lua_block {
         ngx.exit(200)
     }
@@ -59,7 +59,7 @@ location /mirror {
 }
 location /t {
     mirror /mirror;
-    apisix_mirror_on_demand on;
+    api_mirror_on_demand on;
     access_by_lua_block {
         local client = require("resty.api.client")
         assert(client.enable_mirror())

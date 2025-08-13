@@ -6,7 +6,7 @@ index 58332866..01c0f489 100644
                  conf->host_set = 1;
              }
  
-+#if (NGX_HTTP_APISIX)
++#if (NGX_HTTP_API)
 +            if (src[i].key.len == 10
 +                && ngx_strncasecmp(src[i].key.data, (u_char *) ":authority", 10) == 0)
 +            {

@@ -6,14 +6,14 @@ index 787adb3..61d0fd3 100644
  #include <ngx_config.h>
  #include <ngx_core.h>
  #include <ngx_http.h>
-+#if (NGX_HTTP_APISIX)
-+#include <ngx_http_apisix_module.h>
++#if (NGX_HTTP_API)
++#include <ngx_http_api_module.h>
 +#endif
  
  
  typedef struct {
      ngx_array_t  *mirror;
-+#if (NGX_HTTP_APISIX)
++#if (NGX_HTTP_API)
 +    ngx_flag_t    on_demand;
 +#endif
      ngx_flag_t    request_body;
@@ -23,8 +23,8 @@ index 787adb3..61d0fd3 100644
  
  static ngx_command_t  ngx_http_mirror_commands[] = {
  
-+#if (NGX_HTTP_APISIX)
-+    { ngx_string("apisix_mirror_on_demand"),
++#if (NGX_HTTP_API)
++    { ngx_string("api_mirror_on_demand"),
 +      NGX_HTTP_MAIN_CONF|NGX_HTTP_SRV_CONF|NGX_HTTP_LOC_CONF|NGX_CONF_FLAG,
 +      ngx_conf_set_flag_slot,
 +      NGX_HTTP_LOC_CONF_OFFSET,
@@ -39,8 +39,8 @@ index 787adb3..61d0fd3 100644
          return NGX_DECLINED;
      }
  
-+#if (NGX_HTTP_APISIX)
-+    if (mlcf->on_demand && !ngx_http_apisix_is_mirror_enabled(r)) {
++#if (NGX_HTTP_API)
++    if (mlcf->on_demand && !ngx_http_api_is_mirror_enabled(r)) {
 +        return NGX_DECLINED;
 +    }
 +#endif
@@ -52,7 +52,7 @@ index 787adb3..61d0fd3 100644
      }
  
      mlcf->mirror = NGX_CONF_UNSET_PTR;
-+#if (NGX_HTTP_APISIX)
++#if (NGX_HTTP_API)
 +    mlcf->on_demand = NGX_CONF_UNSET;
 +#endif
      mlcf->request_body = NGX_CONF_UNSET;
@@ -62,7 +62,7 @@ index 787adb3..61d0fd3 100644
      ngx_http_mirror_loc_conf_t *prev = parent;
      ngx_http_mirror_loc_conf_t *conf = child;
  
-+#if (NGX_HTTP_APISIX)
++#if (NGX_HTTP_API)
 +    ngx_conf_merge_value(conf->on_demand, prev->on_demand, 0);
 +#endif
      ngx_conf_merge_ptr_value(conf->mirror, prev->mirror, NULL);

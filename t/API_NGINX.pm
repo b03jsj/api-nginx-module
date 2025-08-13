@@ -1,4 +1,4 @@
-package t::APISIX_NGINX;
+package t::API_NGINX;
 
 use Test::Nginx::Socket::Lua;
 use Test::Nginx::Socket::Lua::Stream -Base;

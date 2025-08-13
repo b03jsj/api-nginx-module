@@ -6,8 +6,8 @@ index d8d5edc..bd17dd8 100644
  #include "ngx_http_lua_headers_out.h"
  #include "ngx_http_lua_headers_in.h"
  #include "ngx_http_lua_util.h"
-+#if (NGX_HTTP_APISIX)
-+#include "ngx_http_apisix_module.h"
++#if (NGX_HTTP_API)
++#include "ngx_http_api_module.h"
 +#endif
  
  
@@ -16,8 +16,8 @@ index d8d5edc..bd17dd8 100644
      ngx_uint_t                   i;
      ngx_str_t                    k, v;
  
-+#if (NGX_HTTP_APISIX)
-+    ngx_http_apisix_mark_request_header_set(r);
++#if (NGX_HTTP_API)
++    ngx_http_api_mark_request_header_set(r);
 +#endif
 +
      if (r->connection->fd == (ngx_socket_t) -1) {  /* fake request */

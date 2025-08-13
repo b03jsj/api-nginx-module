@@ -6,7 +6,7 @@ index 92f933d..812e0c4 100644
  #include <ngx_core.h>
  
  
-+#if (NGX_STREAM_APISIX)
++#if (NGX_STREAM_API)
 +#include <ngx_stream.h>
 +#include "../ngx_stream_lua_request.h"
 +#endif

@@ -6,8 +6,8 @@ index c75169c..723b040 100644
  #include <ngx_config.h>
  #include <ngx_core.h>
  #include <ngx_http.h>
-+#if (NGX_HTTP_APISIX)
-+#include <ngx_http_apisix_module.h>
++#if (NGX_HTTP_API)
++#include <ngx_http_api_module.h>
 +#endif
  
  #include <zlib.h>
@@ -16,7 +16,7 @@ index c75169c..723b040 100644
  
      conf = ngx_http_get_module_loc_conf(r, ngx_http_gzip_filter_module);
  
-+#if (NGX_HTTP_APISIX)
++#if (NGX_HTTP_API)
 +    if ((r->headers_out.status != NGX_HTTP_OK
 +            && r->headers_out.status != NGX_HTTP_FORBIDDEN
 +            && r->headers_out.status != NGX_HTTP_NOT_FOUND)
@@ -27,7 +27,7 @@ index c75169c..723b040 100644
 +        return ngx_http_next_header_filter(r);
 +    }
 +
-+    if (!ngx_http_apisix_is_gzip_set(r)
++    if (!ngx_http_api_is_gzip_set(r)
 +        && (!conf->enable
 +            || (r->headers_out.content_length_n != -1
 +                && r->headers_out.content_length_n < conf->min_length)
@@ -51,10 +51,10 @@ index c75169c..723b040 100644
           * uses 128K hash.
           */
  
-+#if (NGX_HTTP_APISIX)
++#if (NGX_HTTP_API)
 +        ngx_int_t       level;
 +
-+        level = ngx_http_apisix_get_gzip_compress_level(r);
++        level = ngx_http_api_get_gzip_compress_level(r);
 +        if (level == NGX_DECLINED) {
 +            level = conf->level;
 +        }
@@ -70,10 +70,10 @@ index c75169c..723b040 100644
      ctx->zstream.zfree = ngx_http_gzip_filter_free;
      ctx->zstream.opaque = ctx;
  
-+#if (NGX_HTTP_APISIX)
++#if (NGX_HTTP_API)
 +    ngx_int_t           level;
 +
-+    level = ngx_http_apisix_get_gzip_compress_level(r);
++    level = ngx_http_api_get_gzip_compress_level(r);
 +    if (level == NGX_DECLINED) {
 +        level = conf->level;
 +    }
@@ -91,11 +91,11 @@ index c75169c..723b040 100644
  
      conf = ngx_http_get_module_loc_conf(r, ngx_http_gzip_filter_module);
  
-+#if (NGX_HTTP_APISIX)
++#if (NGX_HTTP_API)
 +    ngx_int_t           num;
 +    size_t              size;
 +
-+    if (ngx_http_apisix_get_gzip_buffer_conf(r, &num, &size) == NGX_DECLINED) {
++    if (ngx_http_api_get_gzip_buffer_conf(r, &num, &size) == NGX_DECLINED) {
 +        num = conf->bufs.num;
 +        size = conf->bufs.size;
 +    }
@@ -108,7 +108,7 @@ index c75169c..723b040 100644
  
          ngx_free_chain(r->pool, cl);
  
-+#if (NGX_HTTP_APISIX)
++#if (NGX_HTTP_API)
 +    } else if (ctx->bufs < num) {
 +
 +        ctx->out_buf = ngx_create_temp_buf(r->pool, size);
@@ -128,8 +128,8 @@ index b900467..160e512 100644
          return NGX_DECLINED;
      }
  
-+#if (NGX_HTTP_APISIX)
-+    if (!ngx_http_apisix_is_gzip_set(r)
++#if (NGX_HTTP_API)
++    if (!ngx_http_api_is_gzip_set(r)
 +        && r->http_version < clcf->gzip_http_version) {
 +        return NGX_DECLINED;
 +    }

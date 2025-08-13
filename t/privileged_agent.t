@@ -1,4 +1,4 @@
-use t::APISIX_NGINX 'no_plan';
+use t::API_NGINX 'no_plan';
 
 master_on();
 run_tests();

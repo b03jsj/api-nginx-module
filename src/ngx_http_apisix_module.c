@@ -2,16 +2,16 @@
 #include <ngx_core.h>
 #include <ngx_http.h>
 #include <ngx_http_realip_module.h>
-#include "ngx_http_apisix_module.h"
+#include "ngx_http_api_module.h"
 
 
-#define NGX_HTTP_APISIX_SSL_ENC     1
-#define NGX_HTTP_APISIX_SSL_SIGN    2
+#define NGX_HTTP_API_SSL_ENC     1
+#define NGX_HTTP_API_SSL_SIGN    2
 
 
 typedef struct {
     ngx_flag_t      enable_ntls;
-} ngx_http_apisix_main_conf_t;
+} ngx_http_api_main_conf_t;
 
 
 static ngx_str_t remote_addr = ngx_string("remote_addr");
@@ -19,58 +19,58 @@ static ngx_str_t remote_port = ngx_string("remote_port");
 static ngx_str_t realip_remote_addr = ngx_string("realip_remote_addr");
 static ngx_str_t realip_remote_port = ngx_string("realip_remote_port");
 
-static ngx_int_t ngx_http_apisix_init(ngx_conf_t *cf);
-static void *ngx_http_apisix_create_main_conf(ngx_conf_t *cf);
-static void *ngx_http_apisix_create_loc_conf(ngx_conf_t *cf);
-static char *ngx_http_apisix_merge_loc_conf(ngx_conf_t *cf, void *parent,
+static ngx_int_t ngx_http_api_init(ngx_conf_t *cf);
+static void *ngx_http_api_create_main_conf(ngx_conf_t *cf);
+static void *ngx_http_api_create_loc_conf(ngx_conf_t *cf);
+static char *ngx_http_api_merge_loc_conf(ngx_conf_t *cf, void *parent,
     void *child);
 
 static ngx_int_t
-ngx_http_apisix_init(ngx_conf_t *cf)
+ngx_http_api_init(ngx_conf_t *cf)
 {
-    if (ngx_http_apisix_error_log_init(cf) !=  NGX_CONF_OK) {
+    if (ngx_http_api_error_log_init(cf) !=  NGX_CONF_OK) {
         return NGX_ERROR;
     }
     return NGX_OK;
 }
 
-static ngx_command_t ngx_http_apisix_cmds[] = {
-    { ngx_string("apisix_delay_client_max_body_check"),
+static ngx_command_t ngx_http_api_cmds[] = {
+    { ngx_string("api_delay_client_max_body_check"),
       NGX_HTTP_MAIN_CONF|NGX_HTTP_SRV_CONF|NGX_HTTP_LOC_CONF|NGX_CONF_FLAG,
       ngx_conf_set_flag_slot,
       NGX_HTTP_LOC_CONF_OFFSET,
-      offsetof(ngx_http_apisix_loc_conf_t, delay_client_max_body_check),
+      offsetof(ngx_http_api_loc_conf_t, delay_client_max_body_check),
       NULL },
     {
         ngx_string("lua_error_log_request_id"),
         NGX_HTTP_MAIN_CONF|NGX_HTTP_SRV_CONF|NGX_HTTP_LOC_CONF|NGX_CONF_TAKE1,
-        ngx_http_apisix_error_log_request_id,
+        ngx_http_api_error_log_request_id,
         NGX_HTTP_LOC_CONF_OFFSET,
-        offsetof(ngx_http_apisix_loc_conf_t, apisix_request_id_var_index),
+        offsetof(ngx_http_api_loc_conf_t, api_request_id_var_index),
         NULL
     },
     ngx_null_command
 };
 
-static ngx_http_module_t ngx_http_apisix_module_ctx = {
+static ngx_http_module_t ngx_http_api_module_ctx = {
     NULL,                                    /* preconfiguration */
-    ngx_http_apisix_init,                    /* postconfiguration */
+    ngx_http_api_init,                    /* postconfiguration */
 
-    ngx_http_apisix_create_main_conf,        /* create main configuration */
+    ngx_http_api_create_main_conf,        /* create main configuration */
     NULL,                                    /* init main configuration */
 
     NULL,                                    /* create server configuration */
     NULL,                                    /* merge server configuration */
 
-    ngx_http_apisix_create_loc_conf,         /* create location configuration */
-    ngx_http_apisix_merge_loc_conf           /* merge location configuration */
+    ngx_http_api_create_loc_conf,         /* create location configuration */
+    ngx_http_api_merge_loc_conf           /* merge location configuration */
 };
 
 
-ngx_module_t ngx_http_apisix_module = {
+ngx_module_t ngx_http_api_module = {
     NGX_MODULE_V1,
-    &ngx_http_apisix_module_ctx,         /* module context */
-    ngx_http_apisix_cmds,                /* module directives */
+    &ngx_http_api_module_ctx,         /* module context */
+    ngx_http_api_cmds,                /* module directives */
     NGX_HTTP_MODULE,                     /* module type */
     NULL,                                /* init master */
     NULL,                                /* init module */
@@ -84,11 +84,11 @@ ngx_module_t ngx_http_apisix_module = {
 
 
 static void *
-ngx_http_apisix_create_main_conf(ngx_conf_t *cf)
+ngx_http_api_create_main_conf(ngx_conf_t *cf)
 {
-    ngx_http_apisix_main_conf_t  *acf;
+    ngx_http_api_main_conf_t  *acf;
 
-    acf = ngx_pcalloc(cf->pool, sizeof(ngx_http_apisix_main_conf_t));
+    acf = ngx_pcalloc(cf->pool, sizeof(ngx_http_api_main_conf_t));
     if (acf == NULL) {
         return NULL;
     }
@@ -103,28 +103,28 @@ ngx_http_apisix_create_main_conf(ngx_conf_t *cf)
 }
 
 static void *
-ngx_http_apisix_create_loc_conf(ngx_conf_t *cf)
+ngx_http_api_create_loc_conf(ngx_conf_t *cf)
 {
-    ngx_http_apisix_loc_conf_t *conf;
+    ngx_http_api_loc_conf_t *conf;
 
-    conf = ngx_pcalloc(cf->pool, sizeof(ngx_http_apisix_loc_conf_t));
+    conf = ngx_pcalloc(cf->pool, sizeof(ngx_http_api_loc_conf_t));
     if (conf == NULL) {
         return NULL;
     }
 
     conf->delay_client_max_body_check = NGX_CONF_UNSET;
-    conf->apisix_request_id_var_index = NGX_CONF_UNSET;
+    conf->api_request_id_var_index = NGX_CONF_UNSET;
     return conf;
 }
 
 
 static char *
-ngx_http_apisix_merge_loc_conf(ngx_conf_t *cf, void *parent, void *child)
+ngx_http_api_merge_loc_conf(ngx_conf_t *cf, void *parent, void *child)
 {
-    ngx_http_apisix_loc_conf_t *prev = parent;
-    ngx_http_apisix_loc_conf_t *conf = child;
+    ngx_http_api_loc_conf_t *prev = parent;
+    ngx_http_api_loc_conf_t *conf = child;
 
-    ngx_conf_merge_value(conf->apisix_request_id_var_index, prev->apisix_request_id_var_index, NGX_CONF_UNSET);
+    ngx_conf_merge_value(conf->api_request_id_var_index, prev->api_request_id_var_index, NGX_CONF_UNSET);
     ngx_conf_merge_value(conf->delay_client_max_body_check,
                          prev->delay_client_max_body_check, 0);
 
@@ -134,21 +134,21 @@ ngx_http_apisix_merge_loc_conf(ngx_conf_t *cf, void *parent, void *child)
 
 #if (NGX_HTTP_SSL)
 static X509 *
-ngx_http_apisix_x509_copy(const X509 *in)
+ngx_http_api_x509_copy(const X509 *in)
 {
     return X509_up_ref((X509 *) in) == 0 ? NULL : (X509 *) in;
 }
 
 
 static void
-ngx_http_apisix_flush_ssl_error()
+ngx_http_api_flush_ssl_error()
 {
     ERR_clear_error();
 }
 
 
 static void
-ngx_http_apisix_cleanup_cert_and_key(ngx_http_apisix_ctx_t *ctx)
+ngx_http_api_cleanup_cert_and_key(ngx_http_api_ctx_t *ctx)
 {
     if (ctx->upstream_cert != NULL) {
         sk_X509_pop_free(ctx->upstream_cert, X509_free);
@@ -160,7 +160,7 @@ ngx_http_apisix_cleanup_cert_and_key(ngx_http_apisix_ctx_t *ctx)
 }
 
 static void
-ngx_http_apisix_cleanup_trusted_store(ngx_http_apisix_ctx_t *ctx)
+ngx_http_api_cleanup_trusted_store(ngx_http_api_ctx_t *ctx)
 {
     if (ctx->upstream_trusted_store != NULL) {
         X509_STORE_free(ctx->upstream_trusted_store);
@@ -171,27 +171,27 @@ ngx_http_apisix_cleanup_trusted_store(ngx_http_apisix_ctx_t *ctx)
 
 
 static void
-ngx_http_apisix_cleanup(void *data)
+ngx_http_api_cleanup(void *data)
 {
-    ngx_http_apisix_ctx_t     *ctx = data;
+    ngx_http_api_ctx_t     *ctx = data;
 
 #if (NGX_HTTP_SSL)
-    ngx_http_apisix_cleanup_cert_and_key(ctx);
-    ngx_http_apisix_cleanup_trusted_store(ctx);
+    ngx_http_api_cleanup_cert_and_key(ctx);
+    ngx_http_api_cleanup_trusted_store(ctx);
 #endif
 }
 
 
-static ngx_http_apisix_ctx_t *
-ngx_http_apisix_get_module_ctx(ngx_http_request_t *r)
+static ngx_http_api_ctx_t *
+ngx_http_api_get_module_ctx(ngx_http_request_t *r)
 {
-    ngx_http_apisix_ctx_t     *ctx;
+    ngx_http_api_ctx_t     *ctx;
     ngx_pool_cleanup_t        *cln;
 
-    ctx = ngx_http_get_module_ctx(r, ngx_http_apisix_module);
+    ctx = ngx_http_get_module_ctx(r, ngx_http_api_module);
 
     if (ctx == NULL) {
-        ctx = ngx_pcalloc(r->pool, sizeof(ngx_http_apisix_ctx_t));
+        ctx = ngx_pcalloc(r->pool, sizeof(ngx_http_api_ctx_t));
         if (ctx == NULL) {
             return NULL;
         }
@@ -202,9 +202,9 @@ ngx_http_apisix_get_module_ctx(ngx_http_request_t *r)
         }
 
         cln->data = ctx;
-        cln->handler = ngx_http_apisix_cleanup;
+        cln->handler = ngx_http_api_cleanup;
 
-        ngx_http_set_ctx(r, ctx, ngx_http_apisix_module);
+        ngx_http_set_ctx(r, ctx, ngx_http_api_module);
     }
 
     return ctx;
@@ -215,33 +215,33 @@ ngx_http_apisix_get_module_ctx(ngx_http_request_t *r)
 
 
 ngx_int_t
-ngx_http_apisix_upstream_set_cert_and_key(ngx_http_request_t *r,
+ngx_http_api_upstream_set_cert_and_key(ngx_http_request_t *r,
                                           void *data_cert, void *data_key)
 {
     STACK_OF(X509)              *cert = data_cert;
     EVP_PKEY                    *key = data_key;
     STACK_OF(X509)              *new_chain;
-    ngx_http_apisix_ctx_t       *ctx;
+    ngx_http_api_ctx_t       *ctx;
 
     if (cert == NULL || key == NULL) {
         return NGX_ERROR;
     }
 
-    ctx = ngx_http_apisix_get_module_ctx(r);
+    ctx = ngx_http_api_get_module_ctx(r);
 
     if (ctx == NULL) {
         return NGX_ERROR;
     }
 
     if (ctx->upstream_cert != NULL) {
-        ngx_http_apisix_cleanup_cert_and_key(ctx);
+        ngx_http_api_cleanup_cert_and_key(ctx);
     }
 
     if (EVP_PKEY_up_ref(key) == 0) {
         goto failed;
     }
 
-    new_chain = sk_X509_deep_copy(cert, ngx_http_apisix_x509_copy,
+    new_chain = sk_X509_deep_copy(cert, ngx_http_api_x509_copy,
                                   X509_free);
     if (new_chain == NULL) {
         EVP_PKEY_free(key);
@@ -255,29 +255,29 @@ ngx_http_apisix_upstream_set_cert_and_key(ngx_http_request_t *r,
 
 failed:
 
-    ngx_http_apisix_flush_ssl_error();
+    ngx_http_api_flush_ssl_error();
 
     return NGX_ERROR;
 }
 
 ngx_int_t
-ngx_http_apisix_upstream_set_ssl_trusted_store(ngx_http_request_t *r, void *data)
+ngx_http_api_upstream_set_ssl_trusted_store(ngx_http_request_t *r, void *data)
 {
     X509_STORE                  *store = data;
-    ngx_http_apisix_ctx_t       *ctx;
+    ngx_http_api_ctx_t       *ctx;
 
     if (store == NULL) {
         return NGX_ERROR;
     }
 
-    ctx = ngx_http_apisix_get_module_ctx(r);
+    ctx = ngx_http_api_get_module_ctx(r);
 
     if (ctx == NULL) {
         return NGX_ERROR;
     }
 
     if (ctx->upstream_trusted_store != NULL) {
-        ngx_http_apisix_cleanup_trusted_store(ctx);
+        ngx_http_api_cleanup_trusted_store(ctx);
     }
     
     if (X509_STORE_up_ref(store) == 0) {
@@ -290,17 +290,17 @@ ngx_http_apisix_upstream_set_ssl_trusted_store(ngx_http_request_t *r, void *data
 
 failed:
 
-    ngx_http_apisix_flush_ssl_error();
+    ngx_http_api_flush_ssl_error();
 
     return NGX_ERROR;
 }
 
 
 void
-ngx_http_apisix_set_upstream_ssl(ngx_http_request_t *r, ngx_connection_t *c)
+ngx_http_api_set_upstream_ssl(ngx_http_request_t *r, ngx_connection_t *c)
 {
     ngx_ssl_conn_t              *sc = c->ssl->connection;
-    ngx_http_apisix_ctx_t       *ctx;
+    ngx_http_api_ctx_t       *ctx;
     STACK_OF(X509)              *cert;
     EVP_PKEY                    *pkey;
     X509_STORE                  *store;
@@ -311,7 +311,7 @@ ngx_http_apisix_set_upstream_ssl(ngx_http_request_t *r, ngx_connection_t *c)
     int                          i;
 #endif
 
-    ctx = ngx_http_get_module_ctx(r, ngx_http_apisix_module);
+    ctx = ngx_http_get_module_ctx(r, ngx_http_api_module);
 
     if (ctx == NULL) {
         ngx_log_debug0(NGX_LOG_DEBUG_HTTP, r->connection->log, 0,
@@ -381,16 +381,16 @@ ngx_http_apisix_set_upstream_ssl(ngx_http_request_t *r, ngx_connection_t *c)
 
 failed:
 
-    ngx_http_apisix_flush_ssl_error();
+    ngx_http_api_flush_ssl_error();
 }
 
 
 int
-ngx_http_apisix_upstream_set_ssl_verify(ngx_http_request_t *r, int verify)
+ngx_http_api_upstream_set_ssl_verify(ngx_http_request_t *r, int verify)
 {
-    ngx_http_apisix_ctx_t       *ctx;
+    ngx_http_api_ctx_t       *ctx;
 
-    ctx = ngx_http_apisix_get_module_ctx(r);
+    ctx = ngx_http_api_get_module_ctx(r);
 
     if (ctx == NULL) {
         return NGX_ERROR;
@@ -403,11 +403,11 @@ ngx_http_apisix_upstream_set_ssl_verify(ngx_http_request_t *r, int verify)
 }
 
 ngx_flag_t
-ngx_http_apisix_get_upstream_ssl_verify(ngx_http_request_t *r, ngx_flag_t proxy_ssl_verify)
+ngx_http_api_get_upstream_ssl_verify(ngx_http_request_t *r, ngx_flag_t proxy_ssl_verify)
 {
-    ngx_http_apisix_ctx_t       *ctx;
+    ngx_http_api_ctx_t       *ctx;
 
-    ctx = ngx_http_apisix_get_module_ctx(r);
+    ctx = ngx_http_api_get_module_ctx(r);
 
     if (ctx == NULL) {
         return proxy_ssl_verify;
@@ -423,22 +423,22 @@ ngx_http_apisix_get_upstream_ssl_verify(ngx_http_request_t *r, ngx_flag_t proxy_
 
 
 ngx_flag_t
-ngx_http_apisix_delay_client_max_body_check(ngx_http_request_t *r)
+ngx_http_api_delay_client_max_body_check(ngx_http_request_t *r)
 {
-    ngx_http_apisix_loc_conf_t  *alcf;
+    ngx_http_api_loc_conf_t  *alcf;
 
-    alcf = ngx_http_get_module_loc_conf(r, ngx_http_apisix_module);
+    alcf = ngx_http_get_module_loc_conf(r, ngx_http_api_module);
     return alcf->delay_client_max_body_check;
 }
 
 
 ngx_int_t
-ngx_http_apisix_client_set_max_body_size(ngx_http_request_t *r,
+ngx_http_api_client_set_max_body_size(ngx_http_request_t *r,
                                          off_t bytes)
 {
-    ngx_http_apisix_ctx_t       *ctx;
+    ngx_http_api_ctx_t       *ctx;
 
-    ctx = ngx_http_apisix_get_module_ctx(r);
+    ctx = ngx_http_api_get_module_ctx(r);
 
     if (ctx == NULL) {
         return NGX_ERROR;
@@ -456,12 +456,12 @@ ngx_http_apisix_client_set_max_body_size(ngx_http_request_t *r,
 
 
 off_t
-ngx_http_apisix_client_max_body_size(ngx_http_request_t *r)
+ngx_http_api_client_max_body_size(ngx_http_request_t *r)
 {
-    ngx_http_apisix_ctx_t     *ctx;
+    ngx_http_api_ctx_t     *ctx;
     ngx_http_core_loc_conf_t  *clcf;
 
-    ctx = ngx_http_get_module_ctx(r, ngx_http_apisix_module);
+    ctx = ngx_http_get_module_ctx(r, ngx_http_api_module);
 
     if (ctx != NULL && ctx->client_max_body_size_set) {
         ngx_log_debug1(NGX_LOG_DEBUG_HTTP, r->connection->log, 0,
@@ -477,11 +477,11 @@ ngx_http_apisix_client_max_body_size(ngx_http_request_t *r)
 
 
 ngx_int_t
-ngx_http_apisix_is_gzip_set(ngx_http_request_t *r)
+ngx_http_api_is_gzip_set(ngx_http_request_t *r)
 {
-    ngx_http_apisix_ctx_t          *ctx;
+    ngx_http_api_ctx_t          *ctx;
 
-    ctx = ngx_http_apisix_get_module_ctx(r->main);
+    ctx = ngx_http_api_get_module_ctx(r->main);
     if (ctx == NULL || ctx->gzip == NULL) {
         return 0;
     }
@@ -493,12 +493,12 @@ ngx_http_apisix_is_gzip_set(ngx_http_request_t *r)
 
 
 ngx_int_t
-ngx_http_apisix_get_gzip_buffer_conf(ngx_http_request_t *r, ngx_int_t *num,
+ngx_http_api_get_gzip_buffer_conf(ngx_http_request_t *r, ngx_int_t *num,
     size_t *size)
 {
-    ngx_http_apisix_ctx_t          *ctx;
+    ngx_http_api_ctx_t          *ctx;
 
-    ctx = ngx_http_apisix_get_module_ctx(r->main);
+    ctx = ngx_http_api_get_module_ctx(r->main);
     if (ctx == NULL || ctx->gzip == NULL) {
         return NGX_DECLINED;
     }
@@ -514,11 +514,11 @@ ngx_http_apisix_get_gzip_buffer_conf(ngx_http_request_t *r, ngx_int_t *num,
 
 
 ngx_int_t
-ngx_http_apisix_get_gzip_compress_level(ngx_http_request_t *r)
+ngx_http_api_get_gzip_compress_level(ngx_http_request_t *r)
 {
-    ngx_http_apisix_ctx_t          *ctx;
+    ngx_http_api_ctx_t          *ctx;
 
-    ctx = ngx_http_apisix_get_module_ctx(r->main);
+    ctx = ngx_http_api_get_module_ctx(r->main);
     if (ctx == NULL || ctx->gzip == NULL) {
         return NGX_DECLINED;
     }
@@ -531,18 +531,18 @@ ngx_http_apisix_get_gzip_compress_level(ngx_http_request_t *r)
 
 
 ngx_int_t
-ngx_http_apisix_set_gzip(ngx_http_request_t *r, ngx_int_t num, size_t size,
+ngx_http_api_set_gzip(ngx_http_request_t *r, ngx_int_t num, size_t size,
     ngx_int_t level)
 {
-    ngx_http_apisix_ctx_t          *ctx;
-    ngx_http_apisix_gzip_t         *gzip;
+    ngx_http_api_ctx_t          *ctx;
+    ngx_http_api_gzip_t         *gzip;
 
-    ctx = ngx_http_apisix_get_module_ctx(r->main);
+    ctx = ngx_http_api_get_module_ctx(r->main);
     if (ctx == NULL) {
         return NGX_ERROR;
     }
 
-    gzip = ngx_palloc(r->pool, sizeof(ngx_http_apisix_gzip_t));
+    gzip = ngx_palloc(r->pool, sizeof(ngx_http_api_gzip_t));
     if (gzip == NULL) {
         return NGX_ERROR;
     }
@@ -557,7 +557,7 @@ ngx_http_apisix_set_gzip(ngx_http_request_t *r, ngx_int_t num, size_t size,
 
 
 ngx_int_t
-ngx_http_apisix_flush_var(ngx_http_request_t *r, ngx_str_t *name)
+ngx_http_api_flush_var(ngx_http_request_t *r, ngx_str_t *name)
 {
     ngx_uint_t                  hash;
     ngx_http_variable_t        *v;
@@ -582,7 +582,7 @@ ngx_http_apisix_flush_var(ngx_http_request_t *r, ngx_str_t *name)
 
 
 ngx_int_t
-ngx_http_apisix_set_real_ip(ngx_http_request_t *r, const u_char *text, size_t len,
+ngx_http_api_set_real_ip(ngx_http_request_t *r, const u_char *text, size_t len,
                             unsigned int port)
 {
     ngx_int_t           rc;
@@ -603,21 +603,21 @@ ngx_http_apisix_set_real_ip(ngx_http_request_t *r, const u_char *text, size_t le
         return rc;
     }
 
-    ngx_http_apisix_flush_var(r, &remote_addr);
-    ngx_http_apisix_flush_var(r, &remote_port);
-    ngx_http_apisix_flush_var(r, &realip_remote_addr);
-    ngx_http_apisix_flush_var(r, &realip_remote_port);
+    ngx_http_api_flush_var(r, &remote_addr);
+    ngx_http_api_flush_var(r, &remote_port);
+    ngx_http_api_flush_var(r, &realip_remote_addr);
+    ngx_http_api_flush_var(r, &realip_remote_port);
 
     return NGX_OK;
 }
 
 
 ngx_int_t
-ngx_http_apisix_enable_mirror(ngx_http_request_t *r)
+ngx_http_api_enable_mirror(ngx_http_request_t *r)
 {
-    ngx_http_apisix_ctx_t       *ctx;
+    ngx_http_api_ctx_t       *ctx;
 
-    ctx = ngx_http_apisix_get_module_ctx(r);
+    ctx = ngx_http_api_get_module_ctx(r);
 
     if (ctx == NULL) {
         return NGX_ERROR;
@@ -629,21 +629,21 @@ ngx_http_apisix_enable_mirror(ngx_http_request_t *r)
 
 
 ngx_int_t
-ngx_http_apisix_is_mirror_enabled(ngx_http_request_t *r)
+ngx_http_api_is_mirror_enabled(ngx_http_request_t *r)
 {
-    ngx_http_apisix_ctx_t          *ctx;
+    ngx_http_api_ctx_t          *ctx;
 
-    ctx = ngx_http_apisix_get_module_ctx(r);
+    ctx = ngx_http_api_get_module_ctx(r);
     return ctx != NULL && ctx->mirror_enabled;
 }
 
 
 ngx_int_t
-ngx_http_apisix_set_proxy_request_buffering(ngx_http_request_t *r, int on)
+ngx_http_api_set_proxy_request_buffering(ngx_http_request_t *r, int on)
 {
-    ngx_http_apisix_ctx_t       *ctx;
+    ngx_http_api_ctx_t       *ctx;
 
-    ctx = ngx_http_apisix_get_module_ctx(r);
+    ctx = ngx_http_api_get_module_ctx(r);
 
     if (ctx == NULL) {
         return NGX_ERROR;
@@ -656,11 +656,11 @@ ngx_http_apisix_set_proxy_request_buffering(ngx_http_request_t *r, int on)
 
 
 ngx_int_t
-ngx_http_apisix_is_request_buffering(ngx_http_request_t *r, ngx_flag_t static_conf)
+ngx_http_api_is_request_buffering(ngx_http_request_t *r, ngx_flag_t static_conf)
 {
-    ngx_http_apisix_ctx_t          *ctx;
+    ngx_http_api_ctx_t          *ctx;
 
-    ctx = ngx_http_apisix_get_module_ctx(r);
+    ctx = ngx_http_api_get_module_ctx(r);
 
     if (ctx != NULL && ctx->request_buffering_set) {
         return ctx->request_buffering;
@@ -672,11 +672,11 @@ ngx_http_apisix_is_request_buffering(ngx_http_request_t *r, ngx_flag_t static_co
 
 
 ngx_int_t
-ngx_http_apisix_is_request_header_set(ngx_http_request_t *r)
+ngx_http_api_is_request_header_set(ngx_http_request_t *r)
 {
-    ngx_http_apisix_ctx_t          *ctx;
+    ngx_http_api_ctx_t          *ctx;
 
-    ctx = ngx_http_apisix_get_module_ctx(r);
+    ctx = ngx_http_api_get_module_ctx(r);
 
     if (ctx != NULL) {
         return ctx->request_header_set;
@@ -687,11 +687,11 @@ ngx_http_apisix_is_request_header_set(ngx_http_request_t *r)
 
 
 void
-ngx_http_apisix_clear_request_header(ngx_http_request_t *r)
+ngx_http_api_clear_request_header(ngx_http_request_t *r)
 {
-    ngx_http_apisix_ctx_t          *ctx;
+    ngx_http_api_ctx_t          *ctx;
 
-    ctx = ngx_http_apisix_get_module_ctx(r);
+    ctx = ngx_http_api_get_module_ctx(r);
 
     if (ctx != NULL) {
         ctx->request_header_set = 0;
@@ -700,11 +700,11 @@ ngx_http_apisix_clear_request_header(ngx_http_request_t *r)
 
 
 void
-ngx_http_apisix_mark_request_header_set(ngx_http_request_t *r)
+ngx_http_api_mark_request_header_set(ngx_http_request_t *r)
 {
-    ngx_http_apisix_ctx_t          *ctx;
+    ngx_http_api_ctx_t          *ctx;
 
-    ctx = ngx_http_apisix_get_module_ctx(r);
+    ctx = ngx_http_api_get_module_ctx(r);
     if (ctx == NULL) {
         ngx_log_error(NGX_LOG_ERR, r->connection->log, 0, "no memory to mark request headers");
         return;
@@ -715,11 +715,11 @@ ngx_http_apisix_mark_request_header_set(ngx_http_request_t *r)
 
 
 ngx_int_t
-ngx_http_apisix_skip_header_filter_by_lua(ngx_http_request_t *r)
+ngx_http_api_skip_header_filter_by_lua(ngx_http_request_t *r)
 {
-    ngx_http_apisix_ctx_t          *ctx;
+    ngx_http_api_ctx_t          *ctx;
 
-    ctx = ngx_http_apisix_get_module_ctx(r);
+    ctx = ngx_http_api_get_module_ctx(r);
     if (ctx == NULL) {
         return NGX_ERROR;
     }
@@ -730,11 +730,11 @@ ngx_http_apisix_skip_header_filter_by_lua(ngx_http_request_t *r)
 
 
 ngx_int_t
-ngx_http_apisix_is_header_filter_by_lua_skipped(ngx_http_request_t *r)
+ngx_http_api_is_header_filter_by_lua_skipped(ngx_http_request_t *r)
 {
-    ngx_http_apisix_ctx_t          *ctx;
+    ngx_http_api_ctx_t          *ctx;
 
-    ctx = ngx_http_apisix_get_module_ctx(r);
+    ctx = ngx_http_api_get_module_ctx(r);
     if (ctx != NULL) {
         ngx_log_debug2(NGX_LOG_DEBUG_HTTP, r->connection->log, 0,
                        "api header_filter_by_lua %p skipped: %d",
@@ -748,11 +748,11 @@ ngx_http_apisix_is_header_filter_by_lua_skipped(ngx_http_request_t *r)
 
 
 ngx_int_t
-ngx_http_apisix_skip_body_filter_by_lua(ngx_http_request_t *r)
+ngx_http_api_skip_body_filter_by_lua(ngx_http_request_t *r)
 {
-    ngx_http_apisix_ctx_t          *ctx;
+    ngx_http_api_ctx_t          *ctx;
 
-    ctx = ngx_http_apisix_get_module_ctx(r);
+    ctx = ngx_http_api_get_module_ctx(r);
     if (ctx == NULL) {
         return NGX_ERROR;
     }
@@ -763,11 +763,11 @@ ngx_http_apisix_skip_body_filter_by_lua(ngx_http_request_t *r)
 
 
 ngx_int_t
-ngx_http_apisix_is_body_filter_by_lua_skipped(ngx_http_request_t *r)
+ngx_http_api_is_body_filter_by_lua_skipped(ngx_http_request_t *r)
 {
-    ngx_http_apisix_ctx_t          *ctx;
+    ngx_http_api_ctx_t          *ctx;
 
-    ctx = ngx_http_apisix_get_module_ctx(r);
+    ctx = ngx_http_api_get_module_ctx(r);
     if (ctx != NULL) {
         ngx_log_debug2(NGX_LOG_DEBUG_HTTP, r->connection->log, 0,
                        "api body_filter_by_lua %p skipped: %d",
@@ -781,7 +781,7 @@ ngx_http_apisix_is_body_filter_by_lua_skipped(ngx_http_request_t *r)
 
 
 int
-ngx_http_apisix_set_gm_cert(ngx_http_request_t *r, void *cdata, char **err, ngx_flag_t type)
+ngx_http_api_set_gm_cert(ngx_http_request_t *r, void *cdata, char **err, ngx_flag_t type)
 {
 #ifndef TONGSUO_VERSION_NUMBER
 
@@ -816,7 +816,7 @@ ngx_http_apisix_set_gm_cert(ngx_http_request_t *r, void *cdata, char **err, ngx_
         goto failed;
     }
 
-    if (type == NGX_HTTP_APISIX_SSL_ENC) {
+    if (type == NGX_HTTP_API_SSL_ENC) {
         if (SSL_use_enc_certificate(ssl_conn, x509) == 0) {
             *err = "SSL_use_enc_certificate() failed";
             goto failed;
@@ -860,7 +860,7 @@ failed:
 
 
 int
-ngx_http_apisix_set_gm_priv_key(ngx_http_request_t *r,
+ngx_http_api_set_gm_priv_key(ngx_http_request_t *r,
     void *cdata, char **err, ngx_flag_t type)
 {
 #ifndef TONGSUO_VERSION_NUMBER
@@ -890,7 +890,7 @@ ngx_http_apisix_set_gm_priv_key(ngx_http_request_t *r,
         goto failed;
     }
 
-    if (type == NGX_HTTP_APISIX_SSL_ENC) {
+    if (type == NGX_HTTP_API_SSL_ENC) {
         if (SSL_use_enc_PrivateKey(ssl_conn, pkey) == 0) {
             *err = "SSL_use_enc_PrivateKey() failed";
             goto failed;
@@ -915,38 +915,38 @@ failed:
 
 
 int
-ngx_http_apisix_enable_ntls(ngx_http_request_t *r, int enabled)
+ngx_http_api_enable_ntls(ngx_http_request_t *r, int enabled)
 {
-    ngx_http_apisix_main_conf_t  *acf;
+    ngx_http_api_main_conf_t  *acf;
 
-    acf = ngx_http_get_module_main_conf(r, ngx_http_apisix_module);
+    acf = ngx_http_get_module_main_conf(r, ngx_http_api_module);
     acf->enable_ntls = enabled;
     return NGX_OK;
 }
 
 
 ngx_flag_t
-ngx_http_apisix_is_ntls_enabled(ngx_http_conf_ctx_t *conf_ctx)
+ngx_http_api_is_ntls_enabled(ngx_http_conf_ctx_t *conf_ctx)
 {
-    ngx_http_apisix_main_conf_t  *acf;
+    ngx_http_api_main_conf_t  *acf;
 
-    acf = ngx_http_get_module_main_conf(conf_ctx, ngx_http_apisix_module);
+    acf = ngx_http_get_module_main_conf(conf_ctx, ngx_http_api_module);
     return acf->enable_ntls;
 }
 
 /*******************Log handler***************** */
 static u_char*
-ngx_http_apisix_error_log_handler(ngx_http_request_t *r, u_char *buf, size_t len)
+ngx_http_api_error_log_handler(ngx_http_request_t *r, u_char *buf, size_t len)
 {
     ngx_http_variable_value_t *request_id_var;
-    ngx_http_apisix_loc_conf_t *loc_conf;
+    ngx_http_api_loc_conf_t *loc_conf;
 
-    loc_conf = ngx_http_get_module_loc_conf(r, ngx_http_apisix_module);
-    if (loc_conf->apisix_request_id_var_index == NGX_CONF_UNSET) {
+    loc_conf = ngx_http_get_module_loc_conf(r, ngx_http_api_module);
+    if (loc_conf->api_request_id_var_index == NGX_CONF_UNSET) {
         return buf;
     }
 
-    request_id_var = ngx_http_get_indexed_variable(r, loc_conf->apisix_request_id_var_index);
+    request_id_var = ngx_http_get_indexed_variable(r, loc_conf->api_request_id_var_index);
     if (request_id_var == NULL || request_id_var->not_found) {
         return buf;
     }
@@ -956,12 +956,12 @@ ngx_http_apisix_error_log_handler(ngx_http_request_t *r, u_char *buf, size_t len
 
 
 static u_char*
-ngx_http_apisix_combined_error_log_handler(ngx_http_request_t *r, ngx_http_request_t *sr, u_char *buf, size_t len)
+ngx_http_api_combined_error_log_handler(ngx_http_request_t *r, ngx_http_request_t *sr, u_char *buf, size_t len)
 {
     u_char *p;
-    ngx_http_apisix_ctx_t *ctx;
+    ngx_http_api_ctx_t *ctx;
 
-    ctx = ngx_http_apisix_get_module_ctx(r);
+    ctx = ngx_http_api_get_module_ctx(r);
     if (ctx == NULL || ctx->orig_log_handler == NULL) {
         return buf;
     }
@@ -974,17 +974,17 @@ ngx_http_apisix_combined_error_log_handler(ngx_http_request_t *r, ngx_http_reque
     buf = p;
 
     //Apisix log handler
-    buf = ngx_http_apisix_error_log_handler(r, buf, len);
+    buf = ngx_http_api_error_log_handler(r, buf, len);
     return buf;
 }
 
 
 static ngx_int_t
-ngx_http_apisix_replace_error_log_handler(ngx_http_request_t *r)
+ngx_http_api_replace_error_log_handler(ngx_http_request_t *r)
 {
-    ngx_http_apisix_ctx_t *ctx;
+    ngx_http_api_ctx_t *ctx;
 
-    ctx = ngx_http_apisix_get_module_ctx(r);
+    ctx = ngx_http_api_get_module_ctx(r);
     if (ctx == NULL) {
         return NGX_ERROR;
     }
@@ -999,14 +999,14 @@ ngx_http_apisix_replace_error_log_handler(ngx_http_request_t *r)
     * handler's logic in addition to our own.
     */
     ctx->orig_log_handler = r->log_handler;
-    r->log_handler = ngx_http_apisix_combined_error_log_handler;
+    r->log_handler = ngx_http_api_combined_error_log_handler;
 
     return NGX_DECLINED;
 }
 
 
 char *
-ngx_http_apisix_error_log_init(ngx_conf_t *cf)
+ngx_http_api_error_log_init(ngx_conf_t *cf)
 {
     ngx_http_handler_pt *h;
     ngx_http_core_main_conf_t *cmcf;
@@ -1019,17 +1019,17 @@ ngx_http_apisix_error_log_init(ngx_conf_t *cf)
         return NGX_CONF_ERROR;
     }
 
-    *h = ngx_http_apisix_replace_error_log_handler;
+    *h = ngx_http_api_replace_error_log_handler;
 
     return NGX_CONF_OK;
 }
 
 
 char * 
-ngx_http_apisix_error_log_request_id(ngx_conf_t *cf, ngx_command_t *cmd, void *conf)
+ngx_http_api_error_log_request_id(ngx_conf_t *cf, ngx_command_t *cmd, void *conf)
 {
     ngx_str_t *value;
-    ngx_http_apisix_loc_conf_t *loc_conf = conf;
+    ngx_http_api_loc_conf_t *loc_conf = conf;
 
     value = cf->args->elts;
     if (value[1].data[0] != '$') {
@@ -1040,8 +1040,8 @@ ngx_http_apisix_error_log_request_id(ngx_conf_t *cf, ngx_command_t *cmd, void *c
     value[1].len--;
     value[1].data++;
 
-    loc_conf->apisix_request_id_var_index = ngx_http_get_variable_index(cf, &value[1]);
-    if (loc_conf->apisix_request_id_var_index == NGX_ERROR) {
+    loc_conf->api_request_id_var_index = ngx_http_get_variable_index(cf, &value[1]);
+    if (loc_conf->api_request_id_var_index == NGX_ERROR) {
         return NGX_CONF_ERROR;
     }
 
@@ -1050,11 +1050,11 @@ ngx_http_apisix_error_log_request_id(ngx_conf_t *cf, ngx_command_t *cmd, void *c
 
 
 ngx_int_t
-ngx_http_apisix_set_upstream_pass_trailers(ngx_http_request_t *r, int on)
+ngx_http_api_set_upstream_pass_trailers(ngx_http_request_t *r, int on)
 {
-    ngx_http_apisix_ctx_t       *ctx;
+    ngx_http_api_ctx_t       *ctx;
 
-    ctx = ngx_http_apisix_get_module_ctx(r);
+    ctx = ngx_http_api_get_module_ctx(r);
 
     if (ctx == NULL) {
         return NGX_ERROR;
@@ -1067,11 +1067,11 @@ ngx_http_apisix_set_upstream_pass_trailers(ngx_http_request_t *r, int on)
 
 
 ngx_int_t
-ngx_http_apisix_is_upstream_pass_trailers(ngx_http_request_t *r)
+ngx_http_api_is_upstream_pass_trailers(ngx_http_request_t *r)
 {
-    ngx_http_apisix_ctx_t          *ctx;
+    ngx_http_api_ctx_t          *ctx;
 
-    ctx = ngx_http_apisix_get_module_ctx(r);
+    ctx = ngx_http_api_get_module_ctx(r);
 
     if (ctx != NULL && ctx->upstream_pass_trailers_set) {
         ngx_log_debug1(NGX_LOG_DEBUG_HTTP, r->connection->log, 0, "api upstream pass trailers set: %d", ctx->upstream_pass_trailers);

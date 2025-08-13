@@ -1,5 +1,5 @@
 # Origin: https://github.com/openresty/lua-resty-core/pull/276/files
-use t::APISIX_NGINX 'no_plan';
+use t::API_NGINX 'no_plan';
 
 $ENV{TEST_NGINX_SERVER_SSL_PORT_2} = $ENV{TEST_NGINX_SERVER_SSL_PORT} + 1;
 
