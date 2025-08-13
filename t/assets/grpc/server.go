@@ -24,7 +24,7 @@ import (
 	"log"
 	"net"
 
-	pb "apisix.apache.org/plugin/grpc-web/a6"
+	pb "api.apache.org/plugin/grpc-web/a6"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"

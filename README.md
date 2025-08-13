@@ -1,4 +1,4 @@
-# APISIX Nginx Module
+# API Nginx Module
 
 ## Directive
 

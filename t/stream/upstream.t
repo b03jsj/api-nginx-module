@@ -7,7 +7,7 @@ add_block_preprocessor(sub {
         my $http_config = <<'_EOC_';
     server {
         listen 1994 ssl;
-        server_name admin.apisix.dev;
+        server_name admin.api.dev;
         ssl_certificate ../../certs/mtls_server.crt;
         ssl_certificate_key ../../certs/mtls_server.key;
 
@@ -33,10 +33,10 @@ __DATA__
     proxy_pass 127.0.0.1:1994;
     proxy_ssl on;
     proxy_ssl_server_name on;
-    proxy_ssl_name admin.apisix.dev;
+    proxy_ssl_name admin.api.dev;
 --- stream_request eval
-"GET / HTTP/1.0\r\nHost: admin.apisix.dev\r\n\r\n"
---- stream_response_like: ^HTTP/1.1 200 OK.*admin.apisix.dev
+"GET / HTTP/1.0\r\nHost: admin.api.dev\r\n\r\n"
+--- stream_response_like: ^HTTP/1.1 200 OK.*admin.api.dev
 
 
 
@@ -44,9 +44,9 @@ __DATA__
 --- stream_server_config
     proxy_pass 127.0.0.1:1994;
     proxy_ssl_server_name on;
-    proxy_ssl_name admin.apisix.dev;
+    proxy_ssl_name admin.api.dev;
 --- stream_request eval
-"GET / HTTP/1.0\r\nHost: admin.apisix.dev\r\n\r\n"
+"GET / HTTP/1.0\r\nHost: admin.api.dev\r\n\r\n"
 --- stream_response_like: ^.+400 The plain HTTP request was sent to HTTPS port.+$
 
 
@@ -54,12 +54,12 @@ __DATA__
 === TEST 3: proxy TCP over TLS
 --- stream_server_config
     preread_by_lua_block {
-        local up = require("resty.apisix.stream.upstream")
+        local up = require("resty.api.stream.upstream")
         up.set_tls()
     }
     proxy_pass 127.0.0.1:1994;
     proxy_ssl_server_name on;
-    proxy_ssl_name admin.apisix.dev;
+    proxy_ssl_name admin.api.dev;
 --- stream_request eval
-"GET / HTTP/1.0\r\nHost: admin.apisix.dev\r\n\r\n"
---- stream_response_like: ^HTTP/1.1 200 OK.*admin.apisix.dev
+"GET / HTTP/1.0\r\nHost: admin.api.dev\r\n\r\n"
+--- stream_response_like: ^HTTP/1.1 200 OK.*admin.api.dev

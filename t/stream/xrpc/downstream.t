@@ -7,7 +7,7 @@ __DATA__
 === TEST 1: inherit methods from raw socket
 --- stream_server_config
     content_by_lua_block {
-        local sk = require("resty.apisix.stream.xrpc.socket").downstream.socket()
+        local sk = require("resty.api.stream.xrpc.socket").downstream.socket()
         sk:send("world")
 
         assert(sk.receiveany == nil)
@@ -24,7 +24,7 @@ world
 --- stream_server_config
     content_by_lua_block {
         local ffi = require("ffi")
-        local sk = require("resty.apisix.stream.xrpc.socket").downstream.socket()
+        local sk = require("resty.api.stream.xrpc.socket").downstream.socket()
         sk:settimeout(5)
         local p = assert(sk:read(4))
         ngx.say(ffi.string(p, 4))
@@ -59,7 +59,7 @@ timeout
 --- stream_server_config
     content_by_lua_block {
         local ffi = require("ffi")
-        local sk = require("resty.apisix.stream.xrpc.socket").downstream.socket()
+        local sk = require("resty.api.stream.xrpc.socket").downstream.socket()
         sk:settimeout(5)
         local len = 9 * 1024
         local p = assert(sk:read(len))
@@ -76,7 +76,7 @@ timeout
 --- stream_server_config
     content_by_lua_block {
         local ffi = require("ffi")
-        local sk = require("resty.apisix.stream.xrpc.socket").downstream.socket()
+        local sk = require("resty.api.stream.xrpc.socket").downstream.socket()
         sk:settimeout(5)
         local len = 9 * 256
         local p = assert(sk:read(len))
@@ -127,10 +127,10 @@ stream lua tcp socket allocate new new buf of size 4608
 --- stream_server_config
     content_by_lua_block {
         local ffi = require("ffi")
-        local ds = require("resty.apisix.stream.xrpc.socket").downstream.socket()
+        local ds = require("resty.api.stream.xrpc.socket").downstream.socket()
         ds:settimeout(5)
 
-        local us = require("resty.apisix.stream.xrpc.socket").upstream.socket()
+        local us = require("resty.api.stream.xrpc.socket").upstream.socket()
         us:settimeout(50)
         assert(us:connect("127.0.0.1", 1995))
 
@@ -164,10 +164,10 @@ hello world
 --- stream_server_config
     content_by_lua_block {
         local ffi = require("ffi")
-        local ds = require("resty.apisix.stream.xrpc.socket").downstream.socket()
+        local ds = require("resty.api.stream.xrpc.socket").downstream.socket()
         ds:settimeout(5)
 
-        local us = require("resty.apisix.stream.xrpc.socket").upstream.socket()
+        local us = require("resty.api.stream.xrpc.socket").upstream.socket()
         us:settimeout(50)
         assert(us:connect("127.0.0.1", 1995))
 
@@ -198,10 +198,10 @@ hello world
     lua_socket_buffer_size 128;
     content_by_lua_block {
         local ffi = require("ffi")
-        local sk = require("resty.apisix.stream.xrpc.socket").downstream.socket()
+        local sk = require("resty.api.stream.xrpc.socket").downstream.socket()
         sk:settimeout(5)
 
-        local us = require("resty.apisix.stream.xrpc.socket").upstream.socket()
+        local us = require("resty.api.stream.xrpc.socket").upstream.socket()
         us:settimeout(50)
         assert(us:connect("127.0.0.1", 1995))
 
@@ -243,10 +243,10 @@ stream lua tcp socket allocate new new buf of size 144
 --- stream_server_config
     content_by_lua_block {
         local ffi = require("ffi")
-        local ds = require("resty.apisix.stream.xrpc.socket").downstream.socket()
+        local ds = require("resty.api.stream.xrpc.socket").downstream.socket()
         ds:settimeout(5)
 
-        local us = require("resty.apisix.stream.xrpc.socket").upstream.socket()
+        local us = require("resty.api.stream.xrpc.socket").upstream.socket()
         us:settimeout(50)
         assert(us:connect("127.0.0.1", 1995))
 
@@ -280,10 +280,10 @@ hello world
 --- stream_server_config
     content_by_lua_block {
         local ffi = require("ffi")
-        local ds = require("resty.apisix.stream.xrpc.socket").downstream.socket()
+        local ds = require("resty.api.stream.xrpc.socket").downstream.socket()
         ds:settimeout(5)
 
-        local us = require("resty.apisix.stream.xrpc.socket").upstream.socket()
+        local us = require("resty.api.stream.xrpc.socket").upstream.socket()
         us:settimeout(50)
         assert(us:connect("127.0.0.1", 1995))
 
@@ -316,10 +316,10 @@ hello world
     lua_socket_buffer_size 128;
     content_by_lua_block {
         local ffi = require("ffi")
-        local sk = require("resty.apisix.stream.xrpc.socket").downstream.socket()
+        local sk = require("resty.api.stream.xrpc.socket").downstream.socket()
         sk:settimeout(5)
 
-        local us = require("resty.apisix.stream.xrpc.socket").upstream.socket()
+        local us = require("resty.api.stream.xrpc.socket").upstream.socket()
         us:settimeout(50)
         assert(us:connect("127.0.0.1", 1995))
 
@@ -341,7 +341,7 @@ hello world
 --- stream_server_config
     content_by_lua_block {
         local ffi = require("ffi")
-        local sk = require("resty.apisix.stream.xrpc.socket").downstream.socket()
+        local sk = require("resty.api.stream.xrpc.socket").downstream.socket()
         sk:settimeout(5)
         for i = 1, 2 do
             local p, err, len = sk:read_line(128)
@@ -364,7 +364,7 @@ hello world
 --- stream_server_config
     content_by_lua_block {
         local ffi = require("ffi")
-        local sk = require("resty.apisix.stream.xrpc.socket").downstream.socket()
+        local sk = require("resty.api.stream.xrpc.socket").downstream.socket()
         sk:settimeout(5)
         for i = 1, 2 do
             local p, err, len = sk:read_line(128)
@@ -387,7 +387,7 @@ hello world
 --- stream_server_config
     content_by_lua_block {
         local ffi = require("ffi")
-        local sk = require("resty.apisix.stream.xrpc.socket").downstream.socket()
+        local sk = require("resty.api.stream.xrpc.socket").downstream.socket()
         sk:settimeout(5)
         for i = 1, 2 do
             local p, err, len = sk:read_line(128)
@@ -412,7 +412,7 @@ socket read timed out
 --- stream_server_config
     content_by_lua_block {
         local ffi = require("ffi")
-        local sk = require("resty.apisix.stream.xrpc.socket").downstream.socket()
+        local sk = require("resty.api.stream.xrpc.socket").downstream.socket()
         sk:settimeout(5)
         for i = 1, 2 do
             local p, err, len = sk:read_line(14)
@@ -435,7 +435,7 @@ socket read timed out
 --- stream_server_config
     content_by_lua_block {
         local ffi = require("ffi")
-        local sk = require("resty.apisix.stream.xrpc.socket").downstream.socket()
+        local sk = require("resty.api.stream.xrpc.socket").downstream.socket()
         sk:settimeout(5)
         for i = 1, 2 do
             local p, err, len = sk:read_line(14)

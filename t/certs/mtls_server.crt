@@ -3,11 +3,11 @@ Certificate:
         Version: 1 (0x0)
         Serial Number: 64206 (0xface)
     Signature Algorithm: sha256WithRSAEncryption
-        Issuer: C=cn, ST=GuangDong, L=ZhuHai, O=api7, OU=ops, CN=ca.apisix.dev
+        Issuer: C=cn, ST=GuangDong, L=ZhuHai, O=api7, OU=ops, CN=ca.api.dev
         Validity
             Not Before: Jun 20 13:14:34 2020 GMT
             Not After : Jun 18 13:14:34 2030 GMT
-        Subject: C=cn, ST=GuangDong, O=api7, L=ZhuHai, CN=admin.apisix.dev
+        Subject: C=cn, ST=GuangDong, O=api7, L=ZhuHai, CN=admin.api.dev
         Subject Public Key Info:
             Public Key Algorithm: rsaEncryption
                 Public-Key: (2048 bit)

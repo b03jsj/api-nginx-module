@@ -53,7 +53,7 @@ end
 
 
 function _M.set_real_ip(ip, port)
-    -- APISIX will ensure the IP and port are valid
+    -- API will ensure the IP and port are valid
     if not port then
         port = 0
     end

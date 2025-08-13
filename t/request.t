@@ -8,7 +8,7 @@ __DATA__
 --- config
     location /t {
         access_by_lua_block {
-            local req = require("resty.apisix.request")
+            local req = require("resty.api.request")
             ngx.say(req.is_request_header_set())
             ngx.req.set_header("A", "b")
             ngx.say(req.is_request_header_set())

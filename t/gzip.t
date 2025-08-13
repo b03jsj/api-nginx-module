@@ -11,7 +11,7 @@ location /t {
         ngx.say(("1024"):rep(1024))
     }
     header_filter_by_lua_block {
-        local response = require "resty.apisix.response"
+        local response = require "resty.api.response"
         local ok, err = response.set_gzip({
             buffer_num = 4,
             buffer_size = 8192,
@@ -28,8 +28,8 @@ location /t {
 --- more_headers
 Accept-Encoding: gzip
 --- error_log
-apisix gzip level:2
-apisix gzip num:4 size:8192
+api gzip level:2
+api gzip num:4 size:8192
 content-encoding: gzip
 --- no_error_log
 [error]

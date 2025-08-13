@@ -11,7 +11,7 @@ __DATA__
         math.randomseed(ngx.time())
 
         local ffi = require("ffi")
-        local sk = require("resty.apisix.stream.xrpc.socket").downstream.socket()
+        local sk = require("resty.api.stream.xrpc.socket").downstream.socket()
         sk:settimeout(5)
         local total = 9 * 1024
         while total > 0 do
@@ -63,7 +63,7 @@ __DATA__
         math.randomseed(ngx.time())
 
         local ffi = require("ffi")
-        local sk = require("resty.apisix.stream.xrpc.socket").upstream.socket()
+        local sk = require("resty.api.stream.xrpc.socket").upstream.socket()
         assert(sk:connect("127.0.0.1", 1995))
         sk:settimeout(500)
         local total = 9 * 1024
@@ -115,8 +115,8 @@ __DATA__
         math.randomseed(ngx.time())
 
         local ffi = require("ffi")
-        local sk = require("resty.apisix.stream.xrpc.socket").upstream.socket()
-        local dsk = require("resty.apisix.stream.xrpc.socket").downstream.socket()
+        local sk = require("resty.api.stream.xrpc.socket").upstream.socket()
+        local dsk = require("resty.api.stream.xrpc.socket").downstream.socket()
         assert(sk:connect("127.0.0.1", 1995))
         sk:settimeout(500)
         local total = 9 * 1024 * 10
@@ -153,8 +153,8 @@ __DATA__
         math.randomseed(ngx.time())
 
         local ffi = require("ffi")
-        local sk = require("resty.apisix.stream.xrpc.socket").upstream.socket()
-        local dsk = require("resty.apisix.stream.xrpc.socket").downstream.socket()
+        local sk = require("resty.api.stream.xrpc.socket").upstream.socket()
+        local dsk = require("resty.api.stream.xrpc.socket").downstream.socket()
         assert(sk:connect("127.0.0.1", 1995))
         sk:settimeout(500)
         local total = 9 * 128
@@ -192,8 +192,8 @@ __DATA__
         math.randomseed(ngx.time())
 
         local ffi = require("ffi")
-        local sk = require("resty.apisix.stream.xrpc.socket").upstream.socket()
-        local dsk = require("resty.apisix.stream.xrpc.socket").downstream.socket()
+        local sk = require("resty.api.stream.xrpc.socket").upstream.socket()
+        local dsk = require("resty.api.stream.xrpc.socket").downstream.socket()
         assert(sk:connect("127.0.0.1", 1995))
         sk:settimeout(500)
         local total = 9 * 1280
@@ -245,8 +245,8 @@ __DATA__
         math.randomseed(ngx.time())
 
         local ffi = require("ffi")
-        local sk = require("resty.apisix.stream.xrpc.socket").upstream.socket()
-        local dsk = require("resty.apisix.stream.xrpc.socket").downstream.socket()
+        local sk = require("resty.api.stream.xrpc.socket").upstream.socket()
+        local dsk = require("resty.api.stream.xrpc.socket").downstream.socket()
         assert(sk:connect("127.0.0.1", 1995))
         sk:settimeout(500)
         while true do

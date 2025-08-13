@@ -49,7 +49,7 @@ client intended to send too large body
     location /t {
         client_max_body_size 1;
         access_by_lua_block {
-            local client = require("resty.apisix.client")
+            local client = require("resty.api.client")
             assert(client.set_client_max_body_size(5))
         }
         content_by_lua_block {
@@ -68,7 +68,7 @@ POST /t
     location /t {
         client_max_body_size 1;
         access_by_lua_block {
-            local client = require("resty.apisix.client")
+            local client = require("resty.api.client")
             assert(client.set_client_max_body_size(2))
         }
         content_by_lua_block {
@@ -90,7 +90,7 @@ client intended to send too large body
     location /t {
         client_max_body_size 1;
         access_by_lua_block {
-            local client = require("resty.apisix.client")
+            local client = require("resty.api.client")
             assert(client.set_client_max_body_size(5))
         }
         content_by_lua_block {
@@ -117,7 +117,7 @@ Hello\r
     location /t {
         client_max_body_size 1;
         access_by_lua_block {
-            local client = require("resty.apisix.client")
+            local client = require("resty.api.client")
             assert(client.set_client_max_body_size(4))
         }
         content_by_lua_block {
@@ -147,7 +147,7 @@ client intended to send too large chunked body
     location /t {
         client_max_body_size 1;
         access_by_lua_block {
-            local client = require("resty.apisix.client")
+            local client = require("resty.api.client")
             assert(client.set_client_max_body_size(125))
         }
         content_by_lua_block {
@@ -173,7 +173,7 @@ Hello\r
     location /t {
         client_max_body_size 1;
         access_by_lua_block {
-            local client = require("resty.apisix.client")
+            local client = require("resty.api.client")
             assert(client.set_client_max_body_size(1))
         }
         content_by_lua_block {
@@ -205,7 +205,7 @@ client intended to send too large chunked body
     location /t {
         client_max_body_size 1;
         access_by_lua_block {
-            local client = require("resty.apisix.client")
+            local client = require("resty.api.client")
             assert(client.set_client_max_body_size(5))
         }
         proxy_pass http://127.0.0.1:1984/up;
@@ -224,7 +224,7 @@ POST /t
     location /t {
         client_max_body_size 1;
         access_by_lua_block {
-            local client = require("resty.apisix.client")
+            local client = require("resty.api.client")
             assert(client.set_client_max_body_size(3))
         }
         proxy_pass http://127.0.0.1:1984/up;
@@ -246,7 +246,7 @@ client intended to send too large body
     location /t {
         client_max_body_size 1;
         access_by_lua_block {
-            local client = require("resty.apisix.client")
+            local client = require("resty.api.client")
             assert(client.set_client_max_body_size(0))
         }
         proxy_pass http://127.0.0.1:1984/up;

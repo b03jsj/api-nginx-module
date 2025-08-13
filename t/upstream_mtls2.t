@@ -9,7 +9,7 @@ add_block_preprocessor(sub {
         my $http_config = <<'_EOC_';
     server {
         listen unix:$TEST_NGINX_HTML_DIR/nginx.sock ssl;
-        server_name admin.apisix.dev;
+        server_name admin.api.dev;
         ssl_certificate ../../certs/mtls_server.crt;
         ssl_certificate_key ../../certs/mtls_server.key;
         ssl_client_certificate ../../certs/mtls_ca.crt;
@@ -36,7 +36,7 @@ __DATA__
 --- config
     location /t {
         access_by_lua_block {
-            local upstream = require("resty.apisix.upstream")
+            local upstream = require("resty.api.upstream")
             local ssl = require("ngx.ssl")
 
             local f = assert(io.open("t/certs/mtls_client.crt"))
@@ -59,7 +59,7 @@ __DATA__
 
         proxy_ssl_trusted_certificate ../../certs/mtls_client.crt;
         proxy_ssl_verify on;
-        proxy_ssl_name admin.apisix.dev;
+        proxy_ssl_name admin.api.dev;
         proxy_pass https://unix:$TEST_NGINX_HTML_DIR/nginx.sock:/foo;
     }
 --- error_code: 502
@@ -72,7 +72,7 @@ unable to verify the first certificate
 --- config
     location /t {
         access_by_lua_block {
-            local upstream = require("resty.apisix.upstream")
+            local upstream = require("resty.api.upstream")
             local ssl = require("ngx.ssl")
 
             local f = assert(io.open("t/certs/mtls_client.crt"))
@@ -123,7 +123,7 @@ unable to verify the first certificate
 
         proxy_ssl_trusted_certificate ../../certs/mtls_client.crt;
         proxy_ssl_verify on;
-        proxy_ssl_name admin.apisix.dev;
+        proxy_ssl_name admin.api.dev;
         proxy_pass https://unix:$TEST_NGINX_HTML_DIR/nginx.sock:/foo;
     }
 

@@ -16,7 +16,7 @@ add_block_preprocessor(sub {
     init_by_lua_block {
         function set_gm_cert_and_key()
             local ngx_ssl = require "ngx.ssl"
-            local ssl = require "resty.apisix.ssl"
+            local ssl = require "resty.api.ssl"
 
             ngx_ssl.clear_certs()
 
@@ -94,7 +94,7 @@ __DATA__
 === TEST 1: gm handshake
 --- http_config
     init_worker_by_lua_block {
-        local ssl = require "resty.apisix.ssl"
+        local ssl = require "resty.api.ssl"
         ssl.enable_ntls()
     }
 
@@ -105,8 +105,8 @@ __DATA__
         ssl_certificate_by_lua_block {
             set_gm_cert_and_key()
         }
-        ssl_certificate ../../certs/apisix.crt;
-        ssl_certificate_key ../../certs/apisix.key;
+        ssl_certificate ../../certs/api.crt;
+        ssl_certificate_key ../../certs/api.key;
 
         server_tokens off;
         location / {
@@ -163,8 +163,8 @@ New, NTLSv1.1, Cipher is ECDHE-SM2-SM4-CBC-SM3
         ssl_certificate_by_lua_block {
             set_gm_cert_and_key()
         }
-        ssl_certificate ../../certs/apisix.crt;
-        ssl_certificate_key ../../certs/apisix.key;
+        ssl_certificate ../../certs/api.crt;
+        ssl_certificate_key ../../certs/api.key;
 
         server_tokens off;
         location / {
@@ -213,7 +213,7 @@ SSL_do_handshake() failed
 === TEST 3: gm handshake, then disable ntls
 --- http_config
     init_worker_by_lua_block {
-        local ssl = require "resty.apisix.ssl"
+        local ssl = require "resty.api.ssl"
         ssl.enable_ntls()
     }
 
@@ -224,8 +224,8 @@ SSL_do_handshake() failed
         ssl_certificate_by_lua_block {
             set_gm_cert_and_key()
         }
-        ssl_certificate ../../certs/apisix.crt;
-        ssl_certificate_key ../../certs/apisix.key;
+        ssl_certificate ../../certs/api.crt;
+        ssl_certificate_key ../../certs/api.key;
 
         server_tokens off;
         location / {
@@ -239,7 +239,7 @@ SSL_do_handshake() failed
 
     location /t {
         content_by_lua_block {
-            local ssl = require "resty.apisix.ssl"
+            local ssl = require "resty.api.ssl"
             ssl.disable_ntls()
 
             ngx.shared.done:delete("handshake")
@@ -277,7 +277,7 @@ SSL_do_handshake() failed
 === TEST 4: regular handshake with gm enabled
 --- http_config
     init_worker_by_lua_block {
-        local ssl = require "resty.apisix.ssl"
+        local ssl = require "resty.api.ssl"
         ssl.enable_ntls()
     }
 
@@ -322,8 +322,8 @@ SSL_do_handshake() failed
                 return
             end
         }
-        ssl_certificate ../../certs/apisix.crt;
-        ssl_certificate_key ../../certs/apisix.key;
+        ssl_certificate ../../certs/api.crt;
+        ssl_certificate_key ../../certs/api.key;
 
         server_tokens off;
         location / {

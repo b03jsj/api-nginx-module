@@ -8,7 +8,7 @@ __DATA__
 --- config
     location /t {
         content_by_lua_block {
-            local process = require("resty.apisix.process")
+            local process = require("resty.api.process")
             ngx.say(process.get_last_reopen_ms())
         }
     }
@@ -35,7 +35,7 @@ __DATA__
             end
             ngx.sleep(0.1)
 
-            local ap = require("resty.apisix.process")
+            local ap = require("resty.api.process")
             local ms = ap.get_last_reopen_ms()
             if ms == 0 or ms <= now then
                 ngx.say(ms, " ", now)

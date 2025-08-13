@@ -9,7 +9,7 @@ add_block_preprocessor(sub {
         my $http_config = <<'_EOC_';
     server {
         listen unix:$TEST_NGINX_HTML_DIR/nginx.sock ssl;
-        server_name admin.apisix.dev;
+        server_name admin.api.dev;
         ssl_certificate ../../certs/mtls_server.crt;
         ssl_certificate_key ../../certs/mtls_server.key;
         ssl_client_certificate ../../certs/mtls_ca.crt;
@@ -23,7 +23,7 @@ add_block_preprocessor(sub {
 
     server {
         listen unix:$TEST_NGINX_HTML_DIR/nginx2.sock ssl;
-        server_name admin.apisix.dev;
+        server_name admin.api.dev;
         ssl_certificate ../../certs/mtls_server.crt;
         ssl_certificate_key ../../certs/mtls_server.key;
         ssl_client_certificate ../../certs/mtls_ca.crt;
@@ -52,7 +52,7 @@ __DATA__
 --- config
     location /t {
         access_by_lua_block {
-            local upstream = require("resty.apisix.upstream")
+            local upstream = require("resty.api.upstream")
             local ok, err = upstream.set_ssl_verify(true)
             if not ok then
                 ngx.log(ngx.ERR, "set_ssl_verify failed: ", err)
@@ -73,7 +73,7 @@ upstream SSL certificate verify error: (20:unable to get local issuer certificat
 --- config
     location /t {
         access_by_lua_block {
-            local upstream = require("resty.apisix.upstream")
+            local upstream = require("resty.api.upstream")
             local ok, err = upstream.set_ssl_verify(false)
             if not ok then
                 ngx.log(ngx.ERR, "set_ssl_verify failed: ", err)
@@ -94,7 +94,7 @@ ok
 --- config
     location /t {
         access_by_lua_block {
-            local upstream = require("resty.apisix.upstream")
+            local upstream = require("resty.api.upstream")
             local ok, err = upstream.set_ssl_verify(true)
             if not ok then
                 ngx.log(ngx.ERR, "set_ssl_verify failed: ", err)
@@ -105,7 +105,7 @@ ok
         proxy_ssl_trusted_certificate ../../certs/mtls_ca.crt;
         proxy_ssl_verify on;
         proxy_pass https://unix:$TEST_NGINX_HTML_DIR/nginx.sock:/tls;
-        proxy_ssl_name admin.apisix.dev;
+        proxy_ssl_name admin.api.dev;
     }
 
 --- response_body
@@ -117,7 +117,7 @@ ok
 --- config
     location /t {
         content_by_lua_block {
-            local upstream = require("resty.apisix.upstream")
+            local upstream = require("resty.api.upstream")
             upstream.set_ssl_verify(true)
         }
     }
@@ -131,7 +131,7 @@ API disabled in the current context
 --- config
     location /t {
         rewrite_by_lua_block {
-            local upstream = require("resty.apisix.upstream")
+            local upstream = require("resty.api.upstream")
             ngx.status = 500
             local ok, _ = pcall(upstream.set_ssl_verify, 1)
             if not ok then
@@ -167,7 +167,7 @@ invalid argument type: table
 --- config
     location /t {
         access_by_lua_block {
-            local upstream = require("resty.apisix.upstream")
+            local upstream = require("resty.api.upstream")
             local ssl = require("ngx.ssl")
 
             local f = assert(io.open("t/certs/mtls_client.crt"))
@@ -207,7 +207,7 @@ ok
 --- config
     location /t {
         access_by_lua_block {
-            local upstream = require("resty.apisix.upstream")
+            local upstream = require("resty.api.upstream")
             local ssl = require("ngx.ssl")
 
             local f = assert(io.open("t/certs/mtls_client.crt"))
@@ -263,7 +263,7 @@ ok
         }
 
         proxy_pass https://unix:$TEST_NGINX_HTML_DIR/nginx2.sock:/mtls;
-        proxy_ssl_name admin.apisix.dev;
+        proxy_ssl_name admin.api.dev;
     }
 --- response_body
 ok

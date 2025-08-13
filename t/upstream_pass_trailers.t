@@ -23,7 +23,7 @@ location /a6.RouteService/GetRoute {
         ngx.req.set_body_data(ngx.decode_base64("AAAAAAcKBXdvcmxkCgo="))
 
         -- keep upstream trailers
-        assert(require("resty.apisix.upstream").set_pass_trailers(true), 'failed to set pass trailers')
+        assert(require("resty.api.upstream").set_pass_trailers(true), 'failed to set pass trailers')
     }
     grpc_pass grpc://127.0.0.1:50001;
 }
@@ -54,7 +54,7 @@ location /t {
     }
 }
 --- error_log
-apisix upstream pass trailers set: 1
+api upstream pass trailers set: 1
 
 
 
@@ -68,7 +68,7 @@ location /a6.RouteService/GetRoute {
         ngx.req.set_body_data(ngx.decode_base64("AAAAAAcKBXdvcmxkCgo="))
 
         -- drop upstream trailers
-        assert(require("resty.apisix.upstream").set_pass_trailers(false), 'failed to set pass trailers')
+        assert(require("resty.api.upstream").set_pass_trailers(false), 'failed to set pass trailers')
     }
     grpc_pass grpc://127.0.0.1:50001;
 }
@@ -99,4 +99,4 @@ location /t {
     }
 }
 --- error_log
-apisix upstream pass trailers set: 0
+api upstream pass trailers set: 0

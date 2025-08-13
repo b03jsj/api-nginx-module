@@ -7,7 +7,7 @@ add_block_preprocessor(sub {
         my $http_config = <<'_EOC_';
     server {
         listen unix:$TEST_NGINX_HTML_DIR/nginx.sock ssl;
-        server_name admin.apisix.dev;
+        server_name admin.api.dev;
         ssl_certificate ../../certs/mtls_server.crt;
         ssl_certificate_key ../../certs/mtls_server.key;
         ssl_client_certificate ../../certs/mtls_server.crt;

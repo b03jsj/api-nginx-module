@@ -20,7 +20,7 @@ __DATA__
 === TEST 1: tls handshake
 --- config
 listen unix:$TEST_NGINX_HTML_DIR/nginx.sock ssl;
-server_name admin.apisix.dev;
+server_name admin.api.dev;
 ssl_certificate ../../certs/mtls_server.crt;
 ssl_certificate_key ../../certs/mtls_server.key;
 ssl_client_certificate ../../certs/mtls_ca.crt;
@@ -62,7 +62,7 @@ ssl handshake: true
 === TEST 2: tls handshake with ssl client certificate content
 --- config
 listen unix:$TEST_NGINX_HTML_DIR/nginx.sock ssl;
-server_name admin.apisix.dev;
+server_name admin.api.dev;
 ssl_certificate ../../certs/mtls_server.crt;
 ssl_certificate_key ../../certs/mtls_server.key;
 ssl_client_certificate ../../certs/mtls_ca.crt;
@@ -149,7 +149,7 @@ ssl handshake: true
 === TEST 3: tls handshake client_cert_path and client_cert both setting
 --- config
 listen unix:$TEST_NGINX_HTML_DIR/nginx.sock ssl;
-server_name admin.apisix.dev;
+server_name admin.api.dev;
 ssl_certificate ../../certs/mtls_server.crt;
 ssl_certificate_key ../../certs/mtls_server.key;
 ssl_client_certificate ../../certs/mtls_ca.crt;
@@ -194,7 +194,7 @@ client client_cert_path and client_cert both setting
 === TEST 4: ssl: options client_pkey_path and client_pkey both setting
 --- config
 listen unix:$TEST_NGINX_HTML_DIR/nginx.sock ssl;
-server_name admin.apisix.dev;
+server_name admin.api.dev;
 ssl_certificate ../../certs/mtls_server.crt;
 ssl_certificate_key ../../certs/mtls_server.key;
 ssl_client_certificate ../../certs/mtls_ca.crt;
@@ -239,7 +239,7 @@ client certificate private key supplied with client_priv_key and client_priv_key
 === TEST 5: tls handshake with emtpy cert and key
 --- config
 listen unix:$TEST_NGINX_HTML_DIR/nginx.sock ssl;
-server_name admin.apisix.dev;
+server_name admin.api.dev;
 ssl_certificate ../../certs/mtls_server.crt;
 ssl_certificate_key ../../certs/mtls_server.key;
 ssl_client_certificate ../../certs/mtls_ca.crt;

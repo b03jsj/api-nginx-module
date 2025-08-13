@@ -27,7 +27,7 @@ qr/a client request body is buffered to a temporary file/
     proxy_request_buffering on;
     location /t {
         access_by_lua_block {
-            local client = require("resty.apisix.client")
+            local client = require("resty.api.client")
             assert(client.set_proxy_request_buffering(false))
         }
         proxy_pass http://127.0.0.1:1984/up;
@@ -68,7 +68,7 @@ a client request body is buffered to a temporary file
     proxy_request_buffering off;
     location /t {
         access_by_lua_block {
-            local client = require("resty.apisix.client")
+            local client = require("resty.api.client")
             assert(client.set_proxy_request_buffering(true))
         }
         proxy_pass http://127.0.0.1:1984/up;

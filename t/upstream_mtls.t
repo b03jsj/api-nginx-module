@@ -9,7 +9,7 @@ add_block_preprocessor(sub {
         my $http_config = <<'_EOC_';
     server {
         listen unix:$TEST_NGINX_HTML_DIR/nginx.sock ssl;
-        server_name admin.apisix.dev;
+        server_name admin.api.dev;
         ssl_certificate ../../certs/mtls_server.crt;
         ssl_certificate_key ../../certs/mtls_server.key;
         ssl_client_certificate ../../certs/mtls_ca.crt;
@@ -36,7 +36,7 @@ __DATA__
 --- config
     location /t {
         access_by_lua_block {
-            local upstream = require("resty.apisix.upstream")
+            local upstream = require("resty.api.upstream")
             local ssl = require("ngx.ssl")
 
             local f = assert(io.open("t/certs/mtls_client.crt"))
@@ -59,7 +59,7 @@ __DATA__
 
         proxy_ssl_trusted_certificate ../../certs/mtls_ca.crt;
         proxy_ssl_verify on;
-        proxy_ssl_name admin.apisix.dev;
+        proxy_ssl_name admin.api.dev;
         proxy_pass https://unix:$TEST_NGINX_HTML_DIR/nginx.sock:/foo;
     }
 
@@ -72,7 +72,7 @@ ok
 --- config
     location /t {
         access_by_lua_block {
-            local upstream = require("resty.apisix.upstream")
+            local upstream = require("resty.api.upstream")
             local ssl = require("ngx.ssl")
 
             local f = assert(io.open("t/certs/mtls_client.crt"))
@@ -93,7 +93,7 @@ ok
 
         proxy_ssl_trusted_certificate ../../certs/mtls_ca.crt;
         proxy_ssl_verify on;
-        proxy_ssl_name admin.apisix.dev;
+        proxy_ssl_name admin.api.dev;
         proxy_pass https://unix:$TEST_NGINX_HTML_DIR/nginx.sock:/foo;
     }
 
@@ -106,16 +106,16 @@ set_cert_and_key failed: both client certificate and private key should be given
 --- config
     location /t {
         access_by_lua_block {
-            local upstream = require("resty.apisix.upstream")
+            local upstream = require("resty.api.upstream")
             local ssl = require("ngx.ssl")
 
-            local f = assert(io.open("t/certs/apisix.crt"))
+            local f = assert(io.open("t/certs/api.crt"))
             local cert_data = f:read("*a")
             f:close()
 
             local cert = assert(ssl.parse_pem_cert(cert_data))
 
-            f = assert(io.open("t/certs/apisix.key"))
+            f = assert(io.open("t/certs/api.key"))
             local key_data = f:read("*a")
             f:close()
 
@@ -129,7 +129,7 @@ set_cert_and_key failed: both client certificate and private key should be given
 
         proxy_ssl_trusted_certificate ../../certs/mtls_ca.crt;
         proxy_ssl_verify on;
-        proxy_ssl_name admin.apisix.dev;
+        proxy_ssl_name admin.api.dev;
         proxy_pass https://unix:$TEST_NGINX_HTML_DIR/nginx.sock:/foo;
     }
 
@@ -143,7 +143,7 @@ client SSL certificate verify error
 --- config
     location /t {
         access_by_lua_block {
-            local upstream = require("resty.apisix.upstream")
+            local upstream = require("resty.api.upstream")
             local ssl = require("ngx.ssl")
 
             local f = assert(io.open("t/certs/mtls_client.crt"))
@@ -168,7 +168,7 @@ client SSL certificate verify error
 
         proxy_ssl_trusted_certificate ../../certs/mtls_ca.crt;
         proxy_ssl_verify on;
-        proxy_ssl_name admin.apisix.dev;
+        proxy_ssl_name admin.api.dev;
         proxy_pass https://unix:$TEST_NGINX_HTML_DIR/nginx.sock:/foo;
     }
 

@@ -8,7 +8,7 @@ __DATA__
 --- config
     location /t {
         content_by_lua_block {
-            local client = require("resty.apisix.client")
+            local client = require("resty.api.client")
             assert(client.set_real_ip("127.0.0.2"))
             ngx.say(ngx.var.remote_addr)
             ngx.say(ngx.var.remote_port == ngx.var.realip_remote_port)
@@ -26,7 +26,7 @@ true
 --- config
     location /t {
         content_by_lua_block {
-            local client = require("resty.apisix.client")
+            local client = require("resty.api.client")
             assert(client.set_real_ip("172.1.1.2", 1289))
             ngx.say(ngx.var.remote_addr)
             ngx.say(ngx.var.remote_port == "1289")
@@ -44,7 +44,7 @@ true
 --- config
     location /t {
         content_by_lua_block {
-            local client = require("resty.apisix.client")
+            local client = require("resty.api.client")
             assert(client.set_real_ip("1::2"))
             ngx.say(ngx.var.remote_addr)
             ngx.say(ngx.var.remote_port == ngx.var.realip_remote_port)
@@ -63,11 +63,11 @@ true
     access_log logs/access.log log;
     location /t {
         access_by_lua_block {
-            local client = require("resty.apisix.client")
+            local client = require("resty.api.client")
             assert(client.set_real_ip("172.1.2.3", 1234))
         }
         content_by_lua_block {
-            local client = require("resty.apisix.client")
+            local client = require("resty.api.client")
             ngx.say(ngx.var.remote_addr)
             ngx.say(ngx.var.realip_remote_addr)
             ngx.say(ngx.var.remote_port)
@@ -100,7 +100,7 @@ true
     real_ip_header X-Forwarded-For;
     location /t {
         content_by_lua_block {
-            local client = require("resty.apisix.client")
+            local client = require("resty.api.client")
             ngx.say(ngx.var.remote_addr)
             ngx.say(ngx.var.realip_remote_addr)
             ngx.say(ngx.var.remote_port)
@@ -135,7 +135,7 @@ X-Forwarded-For: 172.1.2.3:1234
     real_ip_header X-Forwarded-For;
     location /t {
         content_by_lua_block {
-            local client = require("resty.apisix.client")
+            local client = require("resty.api.client")
             ngx.say(ngx.var.remote_addr)
             ngx.say(ngx.var.realip_remote_addr)
             ngx.say(ngx.var.remote_port)

@@ -8,7 +8,7 @@ __DATA__
 --- config
     location /t {
         access_by_lua_block {
-            local resp = require("resty.apisix.response")
+            local resp = require("resty.api.response")
             assert(resp.skip_header_filter_by_lua())
 
             ngx.header["Test"] = "one"
@@ -27,7 +27,7 @@ Test: one
 --- config
     location /t {
         access_by_lua_block {
-            local resp = require("resty.apisix.response")
+            local resp = require("resty.api.response")
             assert(resp.skip_body_filter_by_lua())
 
             ngx.say("ok")

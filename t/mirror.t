@@ -61,7 +61,7 @@ location /t {
     mirror /mirror;
     apisix_mirror_on_demand on;
     access_by_lua_block {
-        local client = require("resty.apisix.client")
+        local client = require("resty.api.client")
         assert(client.enable_mirror())
     }
     content_by_lua_block {

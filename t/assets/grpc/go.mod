@@ -1,4 +1,4 @@
-module apisix.apache.org/plugin/grpc-web
+module api.apache.org/plugin/grpc-web
 
 go 1.16
 
